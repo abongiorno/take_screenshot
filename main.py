@@ -6,19 +6,13 @@ import requests
 from pathlib import Path
 from datetime import datetime
 
-#REALE
-random_sleep_cambio_pagina_master =random.uniform(25, 45)
-random_sleep_fumetto = random.uniform(600,3600)
-
-# #RAPIDO
-# random_sleep_cambio_pagina =random.uniform(2,3)
-# random_sleep_fumetto = random.uniform(10,15)
+slow_read = True
 
 #TEX WILLER
-ID = 62
+ID = 73
 url="https://www.bonellidigitalclassic.com/detail/TEX_WILLER/BN/TEX_W_"
 folder_name="Tex Willer"
-max_pagine=68
+max_fumetto=80
 
 #TEX
 # ID = 0
@@ -44,7 +38,7 @@ max_pagine=68
 # Apri Chrome
 driver = webdriver.Chrome()
 
-while True:
+while ID <= max_fumetto:
     ID += 1
     print(f"Processing ID: {ID}")
     ID_TEXT = ("000"+str(ID))[-3:]
@@ -93,7 +87,24 @@ while True:
 
     first = True
 
+    try:
+            page_index = driver.find_element("id", "pageIndex")
+            page_text = page_index.text
+            max_pagine = int(page_text.split("/ ")[1])+1
+            print(f"Numero totale di pagine: {max_pagine}")
+    except (NoSuchElementException, IndexError, ValueError):
+        print("Non è stato possibile recuperare il numero di pagine")
+
     while True:
+
+        if slow_read == True:
+            #REALE
+            random_sleep_cambio_pagina_master =random.uniform(25, 45)
+            random_sleep_fumetto = random.uniform(60,80)
+        else:
+            #RAPIDO
+            random_sleep_cambio_pagina_master =random.uniform(2,3)
+            random_sleep_fumetto = random.uniform(10,15)
 
         # Cerca il div con classe mercuryBox
         try:
@@ -113,7 +124,7 @@ while True:
         # print(f"Screenshot del div mercuryBox salvato: {screenshot_path}")
 
         #Verifico se l'immagine non è già stata scaricata
-        filename = output_dir / f"{folder_name}_{counter}.gif"
+        filename = output_dir / f"{ID_TEXT}_{folder_name}_{counter}.gif"
         if not filename.exists():
             random_sleep_cambio_pagina = random_sleep_cambio_pagina_master
             print(f"File {filename} non esistente, procedo con il download.")
