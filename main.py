@@ -6,25 +6,39 @@ import requests
 from pathlib import Path
 from datetime import datetime
 
+#REALE
+random_sleep_cambio_pagina_master =random.uniform(25, 45)
+random_sleep_fumetto = random.uniform(600,3600)
 
-# 2 min a 1 ora
-# random_sleep = random.uniform(120,3600)
-#da 2 minuti a 10 minuti
-random_sleep_fumetto = random.uniform(30,35)
-random_sleep_cambio_pagina =random.uniform(2, 6)
+# #RAPIDO
+# random_sleep_cambio_pagina =random.uniform(2,3)
+# random_sleep_fumetto = random.uniform(10,15)
 
-random_sleep_cambio_pagina =random.uniform(40, 100)
-random_sleep_fumetto = random.uniform(1200,1800)
-
-ID = 17
+#TEX WILLER
+ID = 62
 url="https://www.bonellidigitalclassic.com/detail/TEX_WILLER/BN/TEX_W_"
 folder_name="Tex Willer"
 max_pagine=68
 
-ID = 0
-url="https://www.bonellidigitalclassic.com/detail/DRAGONERO_MONDO_OSCURO/BN/DRAGONERO_MONDO_OSCURO_"
-folder_name="Dragonero Mondo Oscuro"
-max_pagine=100
+#TEX
+# ID = 0
+# url="https://www.bonellidigitalclassic.com/detail/TEX/BN/TEX_"
+# folder_name="Tex"
+# max_pagine=165
+
+#DRAGONERO_IL_RIBELLE
+# ID = 0
+# url="https://www.bonellidigitalclassic.com/detail/DRAGONERO_IL_RIBELLE/BN/DRAGONERO_IL_RIBELLE_"
+# folder_name="Dragonero Il Ribelle"
+# max_pagine=100
+
+#DRAGONERO MONDO OSCURO
+# ID = 6
+# url="https://www.bonellidigitalclassic.com/detail/DRAGONERO_MONDO_OSCURO/BN/DRAGONERO_MONDO_OSCURO_"
+# folder_name="Dragonero Mondo Oscuro"
+# max_pagine=100
+
+
 
 
 # Apri Chrome
@@ -77,11 +91,18 @@ while True:
     # Aspetta qualche secondo per caricare la pagina
     time.sleep(3)
 
+    first = True
+
     while True:
 
         # Cerca il div con classe mercuryBox
         try:
-            mercury = driver.find_element("css selector", "div.mercuryBox")
+            mercury = driver.find_elements("css selector", "div.mercuryBox")
+            if first:
+                mercury= mercury[0]
+                first= False
+            else:
+                mercury= mercury[1]
         except NoSuchElementException:
             print("Elemento div.mercuryBox non trovato, ciclo terminato")
             break
@@ -91,22 +112,31 @@ while True:
         # mercury.screenshot(str(screenshot_path))
         # print(f"Screenshot del div mercuryBox salvato: {screenshot_path}")
 
-        # Cerca un'immagine all'interno del div e scaricala se presente
-        try:
-            img = mercury.find_element("css selector", "img")
-            src = img.get_attribute('src')
-            print(f"Img src trovata: {src}")
-            if src:
-                response = requests.get(src)
-                if response.status_code == 200:
-                    filename = output_dir / f"{folder_name}_{counter}.gif"
-                    with open(filename, 'wb') as f:
-                        f.write(response.content)
-                    print(f"Immagine scaricata: {filename}")
-                else:
-                    print(f"Errore nel download: {response.status_code}")
-        except NoSuchElementException:
-            print("Nessuna <img> trovata dentro il div mercuryBox")
+        #Verifico se l'immagine non è già stata scaricata
+        filename = output_dir / f"{folder_name}_{counter}.gif"
+        if not filename.exists():
+            random_sleep_cambio_pagina = random_sleep_cambio_pagina_master
+            print(f"File {filename} non esistente, procedo con il download.")
+        
+            # Cerca un'immagine all'interno del div e scaricala se presente
+            try:
+                img = mercury.find_element("css selector", "img")
+                src = img.get_attribute('src')
+                print(f"Img src trovata: {src}")
+                if src:
+                    response = requests.get(src)
+                    if response.status_code == 200:
+                        
+                        with open(filename, 'wb') as f:
+                            f.write(response.content)
+                        print(f"Immagine scaricata: {filename}")
+                    else:
+                        print(f"Errore nel download: {response.status_code}")
+            except NoSuchElementException:
+                print("Nessuna <img> trovata dentro il div mercuryBox")
+        else:
+            random_sleep_cambio_pagina = 2
+            print(f"File {filename} già esistente, salto il download.")
 
         # Incrementa il contatore
         counter += 1
