@@ -6,31 +6,56 @@ import requests
 from pathlib import Path
 from datetime import datetime
 
-slow_read = True
+root_dir = "C:\\Users\\andre\\OneDrive\\01_ANDREA\\Fumetti"
+slow_read = True  # Imposta su True per lettura lenta, False per rapida
 
 #TEX WILLER
-ID = 73
-url="https://www.bonellidigitalclassic.com/detail/TEX_WILLER/BN/TEX_W_"
-folder_name="Tex Willer"
-max_fumetto=80
+# ID = 75
+# url="https://www.bonellidigitalclassic.com/detail/TEX_WILLER/BN/TEX_W_"
+# folder_name="Tex Willer"
+# max_fumetto=80
 
 #TEX
-# ID = 0
+# ID = 7
 # url="https://www.bonellidigitalclassic.com/detail/TEX/BN/TEX_"
 # folder_name="Tex"
-# max_pagine=165
+# max_fumetto=9
+
+# #TEX PRESENTA
+# ID=8
+# url="https://www.bonellidigitalclassic.com/detail/TEX_PRESENTA/BN/TEX_PRES_"
+# folder_name="Tex Presenta"
+# max_fumetto=80
+
+# # SUPERTEX SPECIALE
+# ID=0
+# url="https://www.bonellidigitalclassic.com/detail/SUPERTEX_SPECIALE/BN/SUPERTEX_SPECIALE_"
+# folder_name="SuperTex Speciale"
+# max_fumetto=80
+
+# TEX SPECIALE
+ID=5
+url="https://www.bonellidigitalclassic.com/detail/TEX_SPECIALE/BN/TEX_SPECIALE_"
+folder_name="Tex Speciale"
+max_fumetto=80
+
+# #DRAGONERO
+# ID=42
+# url="https://www.bonellidigitalclassic.com/detail/DRAGONERO/BN/DGN_"
+# folder_name="Dragonero"
+# max_fumetto=80
+
+# #DRAGONERO MONDO OSCURO
+# ID = 6
+# url="https://www.bonellidigitalclassic.com/detail/DRAGONERO_MONDO_OSCURO/BN/DRAGONERO_MONDO_OSCURO_"
+# folder_name="Dragonero Mondo Oscuro"
+# max_fumetto=80
 
 #DRAGONERO_IL_RIBELLE
 # ID = 0
 # url="https://www.bonellidigitalclassic.com/detail/DRAGONERO_IL_RIBELLE/BN/DRAGONERO_IL_RIBELLE_"
 # folder_name="Dragonero Il Ribelle"
-# max_pagine=100
-
-#DRAGONERO MONDO OSCURO
-# ID = 6
-# url="https://www.bonellidigitalclassic.com/detail/DRAGONERO_MONDO_OSCURO/BN/DRAGONERO_MONDO_OSCURO_"
-# folder_name="Dragonero Mondo Oscuro"
-# max_pagine=100
+# max_fumetto=80
 
 
 
@@ -68,7 +93,7 @@ while ID <= max_fumetto:
 
 
     # Cartella dove salvare le immagini
-    output_dir = Path(f"{ID_TEXT} {folder_name}")
+    output_dir = Path(root_dir) / folder_name / f"{ID_TEXT} {folder_name}"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Contatore per i file scaricati
@@ -96,18 +121,18 @@ while ID <= max_fumetto:
         print("Non è stato possibile recuperare il numero di pagine")
 
     while True:
-
         if slow_read == True:
             #REALE
-            random_sleep_cambio_pagina_master =random.uniform(25, 45)
-            random_sleep_fumetto = random.uniform(60,80)
+            random_sleep_cambio_pagina_master =random.uniform(35, 45)
+            random_sleep_fumetto = random.uniform(120,240)
         else:
             #RAPIDO
-            random_sleep_cambio_pagina_master =random.uniform(2,3)
-            random_sleep_fumetto = random.uniform(10,15)
+            random_sleep_cambio_pagina_master =random.uniform(2,10)
+            random_sleep_fumetto = random.uniform(5,15)
 
         # Cerca il div con classe mercuryBox
         try:
+            time.sleep(1)
             mercury = driver.find_elements("css selector", "div.mercuryBox")
             if first:
                 mercury= mercury[0]
